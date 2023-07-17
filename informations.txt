@@ -1,0 +1,23 @@
+ACCOUNT ROLES
+
+Role:             Code:
+ superadmin    |   0    => biza
+ director      |   1    => Full
+ moderator     |   2    => faqat User yaratomid
+ worker        |   3    => faqat CRM ga
+ client        |   4    => faqat WEB ga 
+
+-------------------------------------------------
+
+ORDER PROCESS
+
+Process:      Action
+ 1         |   Aniqlashtirish va ma'luumot berish
+ 2         |   Ma'lumot berildi/javob berilmadi
+ 3         |   Uchrashuvga taklif qilindi
+ 4         |   Telefonni kotarmaydi
+ 5         |   To'lov turi yuborildi
+ 6         |   Qarzdorlik
+ 7         |   To'lov qildi
+ 8         |   Bepul qatnashuvchi
+ 9         |   Bekor qilingan

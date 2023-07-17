@@ -1,0 +1,126 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Ustoz Malumotlarini O'zgartirish</div>
+          
+        <div class="ms-auto d-block">
+        <div class="btn-group">
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleDangerModal">O'chirish</button>
+        </div>
+        </div>
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+        <div class="card">
+            <div class="card-body">
+              <div class="p-4 border rounded">
+                <form class="row g-3 needs-validation" action="{% url 'control_teacher_edit' %}" method="POST" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="teacher_id" value="{{ teacher.id }}">
+                    <div class="col-md-12">
+                        <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                          <div class=" shadow text-center">
+                            <img src="{{ teacher.img.url }}" style="object-fit: cover;" class="rounded" width="300" height="300px">
+                          </div>
+                          </div>
+                                
+                          <label for="validationCustom01" class="form-label">Изображения</label>
+                          <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" class="form-control has-validation" accept="image/png, image/jpeg" id="inputGroupFile02">
+                          </div>
+                      </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Ism / Familyasi</label>
+                      <input type="text" name="fio" value="{{ teacher.fio }}" class="form-control" id="validationCustom01" required="">
+                      <div class="invalid-feedback">Iltimos Ism / Familya kiriting</div>
+                    </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Kasbi</label>
+                      <input type="text" name="profession" value="{{ teacher.profession }}" class="form-control" id="validationCustom01" required="">
+                      <div class="invalid-feedback">Iltiomos Kasbibni kiriting</div>
+                    </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Instagram havola</label>
+                      <input type="text" name="instagram" value="{{ teacher.instagram }}" class="form-control" id="validationCustom01">
+                    </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Facebook havola</label>
+                      <input type="text" name="facebook"  value="{{ teacher.facebook}}" class="form-control" id="validationCustom01">
+                    </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Elektron Pochta</label>
+                      <input type="email" name="email" value="{{ teacher.email }}" class="form-control" id="validationCustom01">
+                    </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom01" class="form-label">Youtube havola</label>
+                      <input type="text" name="youtube" value="{{ teacher.youtube }}" class="form-control" id="validationCustom01">
+                    </div>
+                  <div class="col-sm-6 col-12">
+                  <label for="validationCustomUsername" class="form-label">Ustoz haqida tavsif</label>
+                      <textarea id="editor" class="form-control" name="description_uz">{{ teacher.description_uz  }}</textarea>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Изменить</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <!-- Modal -->
+            <div class="modal fade" id="exampleDangerModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title text-danger"><b>Diqqat !</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-danger">
+                    <h5 class="py-4">O'chirganingizdan so'ng qayta tiklab bolmaydi! Rozimisz ?</h5>
+                    <input type="checkbox" id="checker1"> <label for="checker">Roziman</label>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Yopish</button>
+                    <form action="{% url 'control_teacher_remove' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="teacher_id" value="{{ teacher.id }}">
+                        <button type="submit" class="btn btn-outline-danger deleted" disabled>O'chirish</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+  <script>
+    let check = document.querySelector('#checker1')
+    check.addEventListener('change' ,  ()=> {
+    let remove = document.querySelector('.modal-footer .deleted')
+    
+    if (check.checked) {
+    remove.removeAttribute('disabled')
+    } else {
+    remove.setAttribute('disabled', 'true')
+    }
+    })
+  </script>  
+
+
+  {% endblock content %}

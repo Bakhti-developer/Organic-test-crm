@@ -1,0 +1,707 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crm</title>
+    
+    <!-- vue js -->
+    <script src="{% static 'crm/js/vue.js' %}"></script>
+    
+    <!-- bootstrap 4.6 css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    
+    <!-- style.css -->
+    <link rel="stylesheet" href="{% static 'crm/css/style.css' %}">
+    
+    <script>
+        function getToken(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(
+                  cookie.substring(name.length + 1)
+                );
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+    
+        var csrftoken = getToken("csrftoken");
+    </script>
+</head>
+<body class="bg-light">
+<div id="root">
+
+    <!-- * NAVBAR START ========================================= -->
+    <nav class="sticky-top p-3 bg-light shadow">
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap" v-if="[1, 2, 3, 4].includes(showBlock)">
+
+            <!-- <div v-show="showBlock == 1"><a href="{% url 'control_index' %}" class="btn pl-1 btn-outline-secondary d-flex align-items-center"><ion-icon style="font-size: 25px;" name="chevron-back-outline"></ion-icon>Orqaga qaytish</a></div> -->
+
+            <div v-show="showBlock > 1"><button @click="changeBlock(1)" class="btn pl-1 btn-outline-secondary d-flex align-items-center"><ion-icon style="font-size: 25px;" name="chevron-back-outline"></ion-icon>Orqaga qaytish</button></div>
+
+            <div v-show="showBlock == 1"><input type="text" class="form-control mx-1" style="width: 500px;" placeholder="Type to search..." v-model="searchInput" @input="search()"></div>
+
+            <div v-show="showBlock == 4"><input type="text" class="form-control mx-1" style="width: 500px;" placeholder="Type to search..." v-model="archiveSearchInput" @input="archiveSearch()"></div>
+
+            <div v-show="showBlock == 3"><input type="text" class="form-control mx-1" style="width: 500px;" placeholder="Type to search..." v-model="dropSearchInput" @input="dropSearch()"></div>
+
+            <div>
+                <button class="btn btn-outline-secondary" @click="filterBlock = true" v-show="[1].includes(showBlock)" :class="{'active': filterBlock}">Filterlar</button>
+                
+                {% if request.user.account.role.code in roles %}
+
+                <button class="btn btn-outline-secondary" @click="changeBlock(4)" v-show="[1,3,4].includes(showBlock)" :class="{'active': showBlock == 4}">Arxiv</button>
+                
+                <button class="btn btn-outline-danger" @click="changeBlock(3)" v-show="[1,3,4].includes(showBlock)" :class="{'active': showBlock == 3}">Bekor qilinganlar</button>
+                
+                <button class="btn btn-outline-success" data-target="#exampleModal" v-show="showBlock == 1" data-toggle="modal" @click="tableTitle = '', dangerAlert = false, planAlert = false, tablePriority = ''">Etap qo'shish</button>
+
+                <!-- <button class="btn btn-outline-success" data-target="#priorityModal" v-show="showBlock == 1" data-toggle="modal" @click="dangerAlert = false, planAlert = false">Etap darajalari</button> -->
+
+                {% endif %}
+
+                <button class="btn btn-outline-success" data-target="#leadCreate" v-show="showBlock == 1" data-toggle="modal" @click="fio = '', phone = '', plan = '', social = '', comment = '', dangerAlert = false, planAlert = false">Lead qo'shish</button>
+            </div>
+        </div>
+
+    </nav><!-- * NAVBAR END ===================================== -->
+
+
+    <!-- * MODALS START =========================================== -->
+    <div id="modals-block">
+        {% if request.user.account.role.code in roles %}
+        <!-- table create start -->
+        <div class="modal fade" id="exampleModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Yangi etap yaratish</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" v-if="dangerAlert">
+                        <h5 class="mb-0">Bunday daraja boshqa etapda bor!</h5>
+                    </div>
+                    <div class="alert alert-danger" v-if="planAlert">
+                        <h5 class="mb-0">Kerakli malumotlar kiritilmadi!!!</h5>
+                    </div>
+                    <label for="title" class="text-muted mb-0"><b>Nomi</b></label><br>
+                    <input type="text" id="title" class="form-control" v-model="tableTitle">
+                    <label for="priority" class="text-muted mb-0 pt-2"><b>Darajasi</b></label><br>
+                    <input type="number" id="priority" class="form-control" v-model="tablePriority" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Yopish</button>
+                  <button type="button" class="btn btn-success" @click="createTable()">Yaratish</button>
+                </div>
+              </div>
+            </div>
+        </div><!-- table create end -->
+    
+        <!-- table title edit/delete start -->
+        <div class="modal fade" id="tableTitleEdit">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Etap nomini o'zgartirish</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" v-if="dangerAlert">
+                        <h5 class="mb-0">Avval <b>"[[tableTitle]]"</b> ga tegishli leadlarni boshqa etapga o'tkazing!!!</h5>
+                    </div>
+                    <div class="alert alert-danger" v-if="planAlert">
+                        <h5 class="mb-0">Kerakli malumot kiritilmadi!!!</h5>
+                    </div>
+                    <label for="title1" class="text-muted mb-0"><b>Nomi</b></label><br>
+                    <input type="text" id="title1" class="form-control" @input="dangerAlert = false, planAlert = false" v-model="tableTitle">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" @click="deleteTable()">O'chirish</button>
+                  <button type="button" class="btn btn-warning" @click="editTableTitle()">O'zgartirish</button>
+                </div>
+              </div>
+            </div>
+        </div><!-- table title edit/delete end -->
+
+        <!-- canceledModal start -->
+        <div class="modal fade" id="canceledModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+    
+                <!-- loader start =========================== -->
+                <div id="loader-block" v-show="loader == true">
+                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                    <div></div></div>
+                </div>
+                <!-- loader start =========================== -->
+    
+                <div v-show="loader == false">
+                    <div class="modal-header">
+                  
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-secondary" style="font-size: 18px;"># [[canceledBlock.id]]</span>
+                            <span class="badge badge-info ml-2" style="font-size: 17px;">[[canceledBlock.social]]</span>
+                        </div>
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class=""><span class="text-muted">Sana:</span> <b>[[canceledBlock.date]]</b></h5>
+                        <div class="">
+                            <div>
+                                <h1 class="mb-2 pb-1"><span class="text-muted">FIO:</span> <b>[[canceledBlock.fio]]</b></h1>
+                                <h2 class="mb-2 pb-1"><span class="text-muted">Telefon:</span> <b>[[canceledBlock.phone]]</b></h2>
+                                <h2 class="mb-2 pb-1"><span class="text-muted">Kurs:</span> <b>[[canceledBlock.plan]]</b></h2>
+                                <h2 class="mb-2 pb-1" v-if="canceledBlock.operator">
+                                    <span class="text-muted">Operator:</span> <b>[[canceledBlock.operator]]</b>
+                                </h2>
+                                <h2 class="mb-0"><span class="text-muted">Bekor qilingan:</span> <b>[[canceledBlock.droped_table]]</b></h2>
+        
+                            </div>
+                            <div class="p-2 rounded my-4 alert-info" v-if="canceledBlock.customer_comment">
+                                <h5 class="mb-0">[[canceledBlock.customer_comment]]</h5>
+                            </div>
+                            <div class="card card-body bg-light mt-4" v-if="canceledBlock.comments">
+                           
+                                <div class="comment-block">
+                                    <div class="p-2 mb-3 rounded" style="background-color: #fff;" v-for="i in canceledBlock.comments" :class="{'pin-comment': i.pin}">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <p class="mb-0"><b>[[i.account]]</b></p>
+                                            <div><small>[[i.date]]</small></div>
+                                        </div>
+                                        <p class="mb-0">[[i.text]]</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Yopish</button>
+                      <button type="button" class="btn btn-success" @click="recoverAlertBlock()">Ortga Qaytarish</button>
+                    </div>
+                </div>
+    
+                </div>
+            </div>
+        </div><!-- canceledModal end -->
+
+        <!-- table priority edit start -->
+        <div class="modal fade" id="priorityModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabel">Etaplarni darajasini o'zgartirish</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" v-show="dangerAlert">
+                        <h5 class="mb-0">Bunday daraja boshqa etapda bor!!!</h5>
+                    </div>
+                    <div class="alert alert-danger" v-show="planAlert">
+                        <h5 class="mb-0">Kerakli ma'lumot kiritilmadi!!!</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" v-for="table in tables">
+                            <div class="row align-items-center">
+                                <div class="col-9"><h5 class="mb-0">[[table.title]]</h5></div>
+                                <div class="col-3"><input type="number" class="form-control" :value="[[table.priority]]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}" @input="tablePriorityEdit(table.id, $event)"></div>
+                            </div><hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Yopish</button>
+                  <button type="button" class="btn btn-warning" @click="">O'zgartirish</button>
+                </div>
+              </div>
+            </div>
+        </div><!-- table priority edit end -->
+        {% endif %}
+        
+        <!-- lead create start -->
+        <div class="modal fade" id="leadCreate">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Yangi lead yaratish</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" v-if="dangerAlert">
+                        <h5 class="mb-0">Kerakli malumotlar kiritilmadi!!!</h5>
+                    </div>
+                    <div class="alert alert-danger" v-if="planAlert">
+                        <h5 class="mb-0">Kurs nomini to'g'ri yozing!!!</h5>
+                    </div>
+                    <div class="row">
+    
+                        <div class="col-6 mb-3">
+                            <label for="name" class="text-muted"><b>FIO</b></label>
+                            <input required v-model="fio" type="text" id="name" class="form-control">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="phone" class="text-muted"><b>Telefon</b></label>
+                            <input required v-model="phone" type="number" id="phone" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}">
+                        </div>
+    
+                        <div class="col-6 mb-3">
+                            <label for="course_search_input" class="text-muted"><b>Kursni qidirish</b></label>
+                            <input required v-model="plan" class="form-control" list="product_search" id="course_search_input" placeholder="Type to search...">
+                            <datalist id="product_search">
+                                    <option class="search_option" :value="[[i]]" v-for="i in plans">
+                            </datalist>
+                        </div>
+    
+                        <div class="col-6 mb-3">
+                            <label for="" class="text-muted"><b>Ijtimoiy tarmoq</b></label>
+                            <select v-model="social" name="social_media" class="form-control" id="">
+                                <option value="Instagram">Instagram</option>
+                                <option value="Telegram">Telegam</option>
+                                <option value="Facebook">Facebook</option>
+                            </select>
+                        </div>
+    
+                        <div class="col-12">
+                            <label for="admincomment" class="text-muted"><b>Izoh</b></label>
+                            <textarea v-model="comment" class="form-control" id="admincomment" rows="5"></textarea>
+                        </div>
+    
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Yopish</button>
+                  <button type="button" class="btn btn-success" @click="createLead()">Yaratish</button>
+                </div>
+              </div>
+            </div>
+        </div><!-- lead create end -->
+    
+        <!-- filterBlock start -->
+        <div id="newLeadErrorBlock" v-show="filterBlock">
+            <div></div>
+                <div class="card card-body" style="width: 450px;">
+    
+                    {% if request.user.account.role.code in roles %}
+                    <label for="" class="text-muted mb-0"><b>Operator</b></label>
+                    <select class="form-control my-1" v-model="filterOperator"><option :value="0">Barchasi</option><option :value="[[i.id]]" v-for="i in operators">[[i.fio]]</option></select>
+                    {% endif %}
+    
+                    <label for="" class="text-muted mb-0 mt-1"><b>Kurs</b></label>
+                    <select class="form-control my-1" v-model="filterPlan"><option :value="0">Barchasi</option><option :value="[[i]]" v-for="i in plans">[[i]]</option></select>
+    
+                    <label for="" class="text-muted mb-0 mt-1"><b>Sana</b></label>
+                    <input type="date" class="form-control my-1" v-model="filterDate">
+                    <hr>
+                    <button class="btn btn-outline-success mb-2" @click="filter()">Filterlash</button>
+                    <button class="btn btn-secondary" @click="filterBlock = false">Yopish</button>
+                </div>
+            <div></div>
+        </div><!-- filterBlock end -->
+    </div>
+    <!-- * MODALS END =========================================== -->
+
+
+    <!-- * ALERTS START =========================================== -->
+    <div id="alerts-block">
+        <!-- roleErrorBlock start -->
+        <div id="roleErrorBlock" v-show="roleError">
+            <div></div>
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Siz <b><i>"Yangi leadlar"</i></b> dagi leadlarni<br> boshqa jadvalga o'tkaza olmaysiz!!!</h1>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary btn-lg w-100" @click="roleError = false"><h4 class="mb-0">Tushunarli</h4></button>
+                    </div>
+                </div>
+            <div></div>
+        </div><!-- roleErrorBlock end -->
+    
+        <!-- newLeadErrorBlock start -->
+        <div id="newLeadErrorBlock" v-show="newLeadError">
+            <div></div>
+                <div class="card" style="border: 5px solid #dc3545;">
+                    <div class="card-body text-center">
+                        <h1><b class="text-danger">Kech qoldingiz</b></h1>
+                        <h2>Iltimos Bravzerni yangilab yuboring!!!</h2>
+                    </div>
+                    <div class="card-footer" style="background-color: #fff;">
+                        <button class="btn btn-secondary btn-lg w-100" @click="newLeadError = false"><h4 class="mb-0">Tushunarli</h4></button>
+                    </div>
+                </div>
+            <div></div>
+        </div><!-- newLeadErrorBlock end -->
+
+        <!-- cancelAlert start -->
+        <div id="newLeadErrorBlock" v-show="cancelAlert">
+            <div></div>
+                <div class="card" style="border: 5px solid #dc3545;">
+                    <div class="card-body text-center">
+                        <h2>Leadni aniq bekor qilmoqchimisiz?</h2>
+                    </div>
+                    <div class="card-footer" style="background-color: #fff;">
+                        <button class="btn btn-outline-danger btn-lg w-100 mb-2" @click="leadCancel(detailBlock.id), changeBlock(1)"><h4 class="mb-0">Ha, ishonchim komil</h4></button>
+                        <button class="btn btn-secondary btn-lg w-100" @click="cancelAlert = false"><h4 class="mb-0">Yopish</h4></button>
+                    </div>
+                </div>
+            <div></div>
+        </div><!-- cancelAlert end -->
+    
+        <!-- recoverAlert start -->
+        <div id="newLeadErrorBlock" v-show="recoverAlert">
+            <div></div>
+                <div class="card" style="border: 5px solid #28a745;">
+                    <div class="card-body text-center">
+                        <h2>Leadni aniq ortga qaytarmoqchimisiz?</h2>
+                    </div>
+                    <div class="card-footer" style="background-color: #fff;">
+                        <button class="btn btn-outline-success btn-lg w-100 mb-2" @click="leadRecover(canceledBlock.id)"><h4 class="mb-0">Ha, ishonchim komil</h4></button>
+                        <button class="btn btn-secondary btn-lg w-100" @click="recoverAlert = false"><h4 class="mb-0">Yopish</h4></button>
+                    </div>
+                </div>
+            <div></div>
+        </div><!-- recoverAlert end -->
+    
+        <!-- roleUndefined start -->
+        <div id="roleUndefinedError" v-show="roleUndefined">
+            <div></div>
+                <div class="card" style="border: 5px solid #dc3545;">
+                    <div class="card-body text-center">
+                        <h1 class="text-danger">Sizni darajangiz aniqlanmadi</h1>
+                        <h2>Iltimos akkauntdagi darajangizni to'ldiring!!!</h2>
+                    </div>
+                    <div class="card-footer" style="background-color: #fff;">
+                        <a href="{% url 'control_index' %}" class="btn btn-secondary w-100"><h4 class="mb-0">Ortga qaytish</h4></a>
+                    </div>
+                </div>
+            <div></div>
+        </div><!-- roleUndefined end -->
+    </div>
+    <!-- * ALERTS END =========================================== -->
+
+
+    <!-- * MAIN BLOCK START ========================================= -->
+    <main class="pt-4" v-show="showBlock == 1">
+
+        <!-- loader start =========================== -->
+        <div id="loader-block" v-show="loader == true">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <!-- loader end =========================== -->
+
+        <div v-show="loader == false" class="d-flex" style="overflow-x: scroll; height: 90vh;">
+
+            <!-- new leads start -->
+            <div class="mx-1">
+                <div class="card card-body order-table border border-info">
+                    <div class="d-flex align-items-center justify-content-between bg-info text-light p-2 rounded">
+                        <h5 class="mb-0"><b>Yangi leadlar</b></h5>
+                    </div>
+                    <hr class="mt-0">
+                    <div class="orders-block py-3" data-id="new" @dragover="allowDrop" @drop="drop">
+
+                        <div class="single-order" v-for="lead in newLeads" @click="leadDetail(lead.id)" :data-id="[[lead.id]]" :id="[[lead.id]]" @dragstart="drag" draggable>
+                            <div class="mb-2 p-2 border rounded single-lead" :data-order="[[lead.id]]">
+                                <div class="d-flex align-items-center single-item justify-content-between">
+                                    <small class="date">[[lead.date]]</small> 
+                                    <div class="date">
+                                        <span class="badge badge-secondary">#[[lead.id]]</span>
+                                        <span class="badge badge-info">[[lead.social]]</span>
+                                        <span class="badge badge-danger" v-if="lead.reminder"><ion-icon style="margin-bottom:-1px;" name="time-outline"></ion-icon></span>
+                                    </div>
+                                </div>
+                                <h5 class="mb-1 font-weight-bold single-item lead-fio">[[lead.fio]]</h5>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Telefon: </span><span class="date lead-phone">[[lead.phone]]</span></p>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Kurs: </span>[[lead.plan]]</p>
+                                {% if request.user.account.role.code in roles %}
+                                <p class="mb-0 font-weight-bold single-item d-none"><span class="text-muted date">Operator: </span><span class="date"></span></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div><!-- new leads end -->
+
+            <!-- table leads start -->
+            <div class="mx-1" v-for="table in tables">
+                <div class="card card-body order-table">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0"><b>[[table.title]]</b></h5>
+
+                        {% if request.user.account.role.code in roles %}
+                        <ion-icon @click="tableTitle = table.title, tableId = table.id, dangerAlert = false, planAlert = false" style="font-size: 22px; cursor: pointer;" 
+                        title="Edit title" name="create-outline" data-target="#tableTitleEdit" data-toggle="modal"></ion-icon>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="orders-block py-3" :data-id="[[table.id]]" :id="[[table.id]]" @dragover="allowDrop" @drop="drop">   
+
+                        <div class="single-order" :data-id="[[lead.id]]" v-for="lead in table.leads" @click="leadDetail(lead.id)" :id="[[lead.id]]" @dragstart="drag" draggable>
+                            <div class="mb-2 p-2 border rounded single-lead" :data-order="[[lead.id]]">
+                                <div class="d-flex align-items-center single-item justify-content-between">
+                                    <small class="date">[[lead.date]]</small> 
+                                    <div class="date">
+                                        <span class="badge badge-secondary">#[[lead.id]]</span>
+                                        <span class="badge badge-info">[[lead.social]]</span>
+                                        <span class="badge badge-danger" v-if="lead.reminder"><ion-icon style="margin-bottom:-1px;" name="time-outline"></ion-icon></span>
+                                    </div>
+                                </div>
+                                <h5 class="mb-1 font-weight-bold single-item lead-fio">[[lead.fio]]</h5>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Telefon: </span><span class="date lead-phone">[[lead.phone]]</span></p>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Kurs: </span>[[lead.plan]]</p>
+                                {% if request.user.account.role.code in roles %}
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Operator: </span><span class="date">[[lead.operator]]</span></p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div><!-- table leads end -->
+
+            <!-- completed leads start -->
+            <div class="mx-1">
+                <div class="card card-body order-table border border-success">
+                    <div class="d-flex align-items-center justify-content-between bg-success text-light p-2 rounded">
+                        <h5 class="mb-0"><b>Bajarilib bo'lganlar</b></h5>
+                    </div>
+                    <hr class="mt-0">
+                    <div class="orders-block py-3" data-id="completed" id="completed" @dragover="allowDrop" @drop="drop">
+
+                        <div class="single-order" :data-id="[[lead.id]]" v-for="lead in completedLeads" @click="leadDetail(lead.id)" :id="[[lead.id]]" @dragstart="drag" draggable>
+                            <div class="mb-2 p-2 border rounded">
+                                <div class="d-flex align-items-center single-item justify-content-between">
+                                    <small class="date">[[lead.date]]</small> 
+                                    <div class="date">
+                                        <span class="badge badge-secondary">#[[lead.id]]</span>
+                                        <span class="badge badge-info">[[lead.social]]</span>
+                                    </div>
+                                </div>
+                                <h5 class="mb-1 font-weight-bold single-item lead-fio">[[lead.fio]]</h5>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Telefon: </span><span class="date lead-phone">[[lead.phone]]</span></p>
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Kurs: </span>[[lead.plan]]</p>
+                                {% if request.user.account.role.code in roles %}
+                                <p class="mb-0 font-weight-bold single-item"><span class="text-muted date">Operator: </span><span class="date">[[lead.operator]]</span></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div><!-- completed leads start -->
+
+        </div>
+
+    </main>
+    <!-- * MAIN BLOCK END ========================================= -->
+
+
+    <!-- * LEAD DETAIL START ======================================= -->
+    <div class="lead-detail pt-4" v-show="showBlock == 2">
+
+        <!-- loader start =========================== -->
+        <div id="loader-block" v-show="loader == true">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <!-- loader start =========================== -->
+
+        <div v-show="loader == false" class="container card card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-secondary" style="font-size: 18px;"># [[detailBlock.id]]</span>
+                            <h5 class="mb-0 pl-2">[[detailBlock.date]]</h5>
+                        </div>
+                        <div>
+                            <span class="badge alert-secondary" style="font-size: 18.5px;">[[detailBlock.table]]</span>
+                            <span class="badge badge-info" style="font-size: 17px;">[[detailBlock.social]]</span>
+                            <span class="badge alert-danger" style="font-size: 17px;" v-if="detailBlock.reminder && detailBlock.complete == false"><ion-icon style="margin-bottom: -3px;" name="time-outline"></ion-icon></span>
+                        </div>
+                    </div><hr>
+                    <div>
+                        <h1 class="mb-2 pb-1"><span class="text-muted">FIO:</span> <b>[[detailBlock.fio]]</b></h1>
+                        <h2 class="mb-2 pb-1"><span class="text-muted">Telefon:</span> <b>[[detailBlock.phone]]</b></h2>
+                        <h2 class="mb-2 pb-1"><span class="text-muted">Kurs:</span> <b>[[detailBlock.plan]]</b></h2>
+
+                        {% if request.user.account.role.code in roles %}
+                        <h2 class="mb-2 pb-1" v-if="detailBlock.operator"><span class="text-muted">Operator:</span> <b>[[detailBlock.operator]]</b></h2>
+                        {% endif %}
+
+                    </div>
+                    <div class="p-2 rounded my-4 alert-info" v-if="detailBlock.customer_comment">
+                        <h5 class="mb-0">[[detailBlock.customer_comment]]</h5>
+                    </div>
+
+                    {% if request.user.account.role.code in roles %}
+                    <div class="card card-body mb-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-outline-danger w-100" @click="cancelAlertBlock()">Leadni bekor qilish</button>
+                            </div>
+                            <!-- <div class="col-6">
+                                <button class="btn btn-outline-secondary w-100">Telefon qilish</button>
+                            </div> -->
+                        </div>
+                    </div>
+                    {% elif request.user.account.role.code == 3 %}
+                    <!-- <div class="card card-body mb-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <button href="" class="btn btn-outline-secondary w-100">Telefon qilish</button>
+                            </div>
+                        </div>
+                    </div> -->
+                    {% endif %}
+                    <div class="card card-body bg-light" v-if="detailBlock.complete == false">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="w-75"><input type="datetime-local" v-model="reminder" class="form-control"></div>
+                            <div class="w-25 ml-2" v-if="detailBlock.reminder"><button class="w-100 btn alert-info" @click="reminderCreateOrRemove(detailBlock.id)" >Eslatmani o'chirish</button></div>
+                            <div class="w-25 ml-2" v-else><button class="w-100 btn alert-info" @click="reminderCreateOrRemove(detailBlock.id)">Eslatma qo'shish</button></div>
+                        </div>
+                    </div>
+                    <div class="card card-body bg-light mt-4 pr-2 pl-3" style="overflow-y: scroll;" 
+                    :class='{"height-1": detailBlock.table >= "1", "height-2": detailBlock.table == "Yangi buyurtma", "height-3": detailBlock.table == "Bajarilib bo`lgan"}'>
+                        <div class="d-flex align-items-end justify-content-between">
+                            <div class="w-75"><textarea rows="1" class="form-control" v-model="leadComment"></textarea></div>
+                            <div class="w-25 ml-2"><button class="w-100 btn alert-info" @click="commentCreate(detailBlock.id)">Izoh qo'shish</button></div>
+                        </div><hr>
+                        <div class="comment-block">
+                            <div class="p-2 mb-3 rounded" style="background-color: #fff;" v-for="i in detailBlock.comments" :class="{'pin-comment': i.pin}">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="mb-0"><b>[[i.account]]</b></p>
+                                    <div class="d-flex align-tems-center">
+                                        <small>[[i.date]]</small>
+
+                                        <a href="javascript:;" class="pl-2" style="margin-top: -3px;" @click="commentPinOrUnpin(i.id)" 
+                                        v-if="(i.pin && accountRole < 3) || (i.pin && accountId == i.account_id)">Unpin</a>
+                                        <a href="javascript:;" class="pl-2" style="margin-top: -3px;" @click="commentPinOrUnpin(i.id)" 
+                                        v-else-if="(i.pin == false && accountId == i.account_id) || (i.pin == false && accountRole < 3)">Pin</a>
+
+                                        <a href="javascript:;" class="pl-2 text-danger" v-if="accountRole < 3" style="margin-top: -3px;" @click="commentDelete(i.id)">Delete</a>
+                                        <a href="javascript:;" class="pl-2 text-danger" v-else-if="accountId == i.account_id" style="margin-top: -3px;" @click="commentDelete(i.id)">Delete</a>
+
+                                    </div>
+                                </div>
+                                <p class="mb-0">[[i.text]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-4">
+                    <div class="card card-body bg-light">
+
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <!-- * LEAD DETAIL END ======================================= -->
+
+
+    {% if request.user.account.role.code in roles %}
+    <!-- * DROPED LEADS START ======================================= -->
+    <div class="p-5" v-show="showBlock == 3">
+
+        <!-- loader start =========================== -->
+        <div id="loader-block" v-show="loader == true">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <!-- loader start =========================== -->
+
+        <div v-show="loader == false" class="card card-body p-5">
+            <h1>Bekor qilingan leadlar</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>FIO</th><th>KURS</th><th>BEKOR QILINGAN</th><th>IJTIMOIY TARMOQ</th><th>SANA</th><th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="i in dropedLeads">
+                        <td>[[i.id]]</td>
+                        <td class="drop-fio">[[i.fio]]</td>
+                        <td class="drop-plan">[[i.plan]]</td>
+                        <td class="drop-table">[[i.droped_table]]</td>
+                        <td class="drop-social">[[i.social]]</td>
+                        <td class="drop-date">[[i.date]]</td>
+                        <td><button class="btn btn-secondary" data-target="#canceledModal" @click="canceledDetail(i.id)" data-toggle="modal">Detallar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!-- * DROPED LEADS END ======================================= -->
+
+
+    <!-- * ARCHIVED LEADS START ======================================= -->
+    <div class="p-5" v-show="showBlock == 4">
+
+        <!-- loader start =========================== -->
+        <div id="loader-block" v-show="loader == true">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <!-- loader start =========================== -->
+
+        <div v-show="loader == false" class="card card-body p-5">
+            <h1>Arxiv</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>FIO</th><th>TELEFON</th><th>KURS</th><th>OPERATOR</th><th>IJTIMOIY TARMOQ</th><th>SANA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="i in archivedLeads">
+                        <td>[[i.id]]</td>
+                        <td class="archive-fio">[[i.fio]]</td>
+                        <td class="archive-phone">[[i.phone]]</td>
+                        <td class="archive-plan">[[i.plan]]</td>
+                        <td class="archive-operator">[[i.operator]]</td>
+                        <td class="archive-social">[[i.social]]</td>
+                        <td  class="archive-date">[[i.date]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- * ARCHIVED LEADS END ======================================= -->
+    {% endif %}
+    
+</div>               
+                    
+    <!-- bootstrap 4.6 js -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+
+    <!-- ion-icon -->
+    <script type="module" src="https://unpkg.com/ionicons@6.0.0/dist/ionicons/ionicons.esm.js"></script>
+
+    <!-- main js -->
+    <script src="{% static 'crm/js/main.js' %}"></script>
+</body>
+</html>

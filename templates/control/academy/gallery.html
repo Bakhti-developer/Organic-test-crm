@@ -1,0 +1,94 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <div class="row">
+             <div class="col-12">
+                <div class="card radius-10 w-100">
+                    <div class="card-body">
+                        {% if code == "added_photo" %}
+                        <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                            </div>
+                            <div class="ms-3">
+                              <div class="text-white">Rasm qo'shildi</div>
+                            </div>
+                          </div>
+                          <h3 class="alert_nums text-light align-self-center">7</h3>
+                        </div>
+                        {% elif code == "removed_photo" %}
+                        <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+                            </div>
+                            <div class="ms-3">
+                              <div class="text-white">Rasm o'chirildi</div>
+                            </div>
+                          </div>
+                          <h3 class="alert_nums text-light align-self-center">7</h3>
+                        </div>
+                        {% endif %}
+                      <div class="d-flex align-items-center mb-3">
+                        <h3 class="mb-0">Rasmlar</h3>
+                        <div class="dropdown options ms-auto">
+                          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#photo_upload">Qo'shish
+                          </button>
+                        </div>
+                        <hr>
+                      </div>
+                      <div class="g-3 mt-2 align-items-center">
+                        <div class="row">
+                            {% for i in gallery %}
+                            <div class="col-sm-3 col-6 mb-3" style="position: relative;">
+                              <img class="img-fluid" src="{{ i.img_min.url }}" style="height: 180px; width: 100%; object-fit: cover; object-position: center;" alt="{{ i.img_min.url }}"> 
+                                  <a href="{% url 'control_gallery_remove' i.id %}" class="btn btn-danger" style="position: absolute; top:0; right: 0;">
+                                    <ion-icon name="trash-sharp" aria-label="trash sharp" role="img" class="md hydrated"></ion-icon>
+                                  </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+             </div>
+
+          </div>
+
+    </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+
+  <div class="col">
+    <!-- Modal -->
+    <div class="modal fade" id="photo_upload" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><b>Выберите изображение</b></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'control_gallery_add' %}" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="input-group has-validation mb-3">
+              <input type="file" name="file" class="form-control has-validation" accept="image/png, image/jpeg"required id="inputGroupFile02">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary">Добавить</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock content %}

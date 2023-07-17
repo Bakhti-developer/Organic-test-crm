@@ -1,0 +1,105 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Kurs Qo'shish</div>
+          
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+        <div class="card">
+          <div class="card-body">
+            <div class="p-4 border rounded">
+              {% if code == "title" %}
+              <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                  <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                  </div>
+                  <div class="ms-3">
+                    <div class="text-white">Bunday salavhada kurs mavjud !</div>
+                  </div>
+                </div>
+                <h3 class="alert_nums text-light align-self-center">7</h3>
+              </div>
+              {% endif %}
+              <form class="row g-3 needs-validation" action="{% url 'control_course_create' %}" method="POST" enctype="multipart/form-data" novalidate="">
+                  {% csrf_token %}
+                  <div class="col-12">
+                      <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                        <div class=" shadow text-center">
+                          <img src="https://dunyo.yola.menu/static/control/assets/images/404-error.png" alt="..." class="rounded-circle" width="300">
+                        </div>
+                        </div>
+                              
+                        <label for="validationCustom01" class="form-label">Rasm </label>
+                        <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" required class="form-control has-validation" accept="image/png, image/jpeg"required id="inputGroupFile02">
+                          </div>
+                    </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom00" class="form-label">Toifa</label>
+                    <select class="form-select mb-3" required="" name="category_id" aria-label="Default select example" id="validationCustom00">
+                        {% for category in categories %}
+                          <option value="{{category.id}}">{{ category.title_uz }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom00" class="form-label">Chegirma</label>
+                    <select class="form-select mb-3" required="" name="discount_id" aria-label="Default select example" id="validationCustom00">
+                        {% for i in discount %}
+                          <option value="{{i.id}}">{{ i.title }} {{ i.unit }}%</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Sarlavha</label>
+                    <input type="text" name="title_uz" class="form-control" id="validationCustom01" required="">
+                    <div class="invalid-feedback">Iltimos sarlavhani kiriting</div>
+                  </div>
+                <div class="col-sm-6 col-12">
+                  <label for="validationCustomUsername" class="form-label">Priyoritet</label>
+                  <div class="input-group has-validation"> <span class="input-group-text" id="inputGroupPrepend">№</span>
+                    <input type="number" name="priority" value="1" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+                    <div class="invalid-feedback">Iltimos priyoritetni kirirting</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-12">
+                  <label for="validationCustomUsername" class="form-label">Narxi</label>
+                  <div class="input-group has-validation"> 
+                    <input type="number" name="price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+                    <span class="input-group-text" id="inputGroupPrepend"></span>
+                    <div class="invalid-feedback">Iltimos narxini kiriting</div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="validationCustomUsername" class="form-label">Tavsif</label>
+                    <textarea id="editor" class="form-control" name="description_uz"></textarea>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-primary" type="submit">Qo'shish</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+        </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+
+
+  {% endblock content %}

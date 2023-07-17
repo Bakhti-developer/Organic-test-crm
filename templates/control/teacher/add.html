@@ -1,0 +1,83 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Ustoz Malumotlarini Yaratish</div>
+          
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+        <div class="card">
+          <div class="card-body">
+            <div class="p-4 border rounded">
+              <form class="row g-3 needs-validation" action="{% url 'control_teacher_create' %}" method="POST" enctype="multipart/form-data" novalidate="">
+                  {% csrf_token %}
+                  <div class="col-12">
+                      <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                        <div class=" shadow text-center">
+                          <img src="https://dunyo.yola.menu/static/control/assets/images/404-error.png" alt="..." class="rounded-circle" width="300">
+                        </div>
+                        </div>
+                              
+                        <label for="validationCustom01" class="form-label">Rasmi </label>
+                        <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" required class="form-control has-validation" accept="image/png, image/jpeg"required id="inputGroupFile02">
+                          </div>
+                    </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Ism / Familyasi</label>
+                    <input type="text" name="fio" class="form-control" id="validationCustom01" required="">
+                    <div class="invalid-feedback">Iltimos Ism / Familya kiriting</div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Kasbi</label>
+                    <input type="text" name="profession" class="form-control" id="validationCustom01" required="">
+                    <div class="invalid-feedback">Iltiomos Kasbibni kiriting</div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Instagram havola</label>
+                    <input type="text" name="instagram" class="form-control" id="validationCustom01">
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Facebook havola</label>
+                    <input type="text" name="facebook" class="form-control" id="validationCustom01">
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Elektron Pochta</label>
+                    <input type="email" name="email" class="form-control" id="validationCustom01">
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Youtube havola</label>
+                    <input type="text" name="youtube" class="form-control" id="validationCustom01">
+                  </div>
+                <div class="col-sm-6 col-12">
+                <label for="validationCustomUsername" class="form-label">Ustoz haqida tavsif</label>
+                    <textarea id="editor" class="form-control" name="description_uz "></textarea>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-primary" type="submit">Добавить</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+        </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+
+
+  {% endblock content %}

@@ -1,0 +1,100 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+   <div class="page-content">
+
+    <!--start breadcrumb-->
+    <div class="page-breadcrumb d-flex align-items-center mb-3">
+      <div class="breadcrumb-title pe-3 d-none d-sm-block">Barcha Ishchilar</div>
+      
+<div class="ms-auto d-block">
+<div class="btn-group">
+<a href="{% url 'control_user_add' %}" class="btn btn-outline-primary d-block">Yaratish</a>
+</div>
+</div>
+
+    </div>
+    <!--end breadcrumb-->
+    <hr>
+
+    {% if code == 'create' %}
+    <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+            </div>
+            <div class="ms-3">
+            <div class="text-white">Foydalanuvchi muvoffaqiyatli yaratildi.</div>
+            </div>
+        </div>
+        <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% elif code == "edit" %}
+    <div class="alert alert-dismissible fade show py-2 bg-warning d-flex justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+        </div>
+        <div class="ms-3">
+          <div class="text-white">Foydalanuvchi muvoffaqiyatli o'zgartrildi.</div>
+        </div>
+      </div>
+      <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% elif code == "delete" %}
+    <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+        </div>
+        <div class="ms-3">
+          <div class="text-white">Foydalanuvchi muvoffaqiyatli o'chirildi.</div>
+        </div>
+      </div>
+      <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% endif %}
+    
+
+<div class="card">
+    <div class="card-body">
+        <div class="">
+            <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="example" class="table table-striped table-bordered dataTable no-footer" style="width:100%" role="grid" aria-describedby="example_info">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Название: activate to sort column descending" style="width: 296.328px;">Akkount</th>
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Приоритет: activate to sort column ascending" style="width: 148.938px;">Daraja</th>
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Наименовании: activate to sort column ascending" style="width: 203.562px;">Telefon</th>
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Детали: activate to sort column ascending" style="width: 171.172px;">Detal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    {% if user.account.role.code == 1 or user.account.role.code == 2 or user.account.role.code == 3 %}
+                                <tr role="row" class="odd">
+                                    <td class="sorting_1">{{ user.username }}</td>
+                                    <td>{{ user.account.role.title }}</td>
+                                    <td>{{ user.account.phone }}</td>
+                                    <td><a href="{% url 'control_user_detail' user.id %}" class="btn btn-success btn-sm"> Detal </a></td>
+                                </tr>
+                                     {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+  {% endblock content %}

@@ -1,0 +1,103 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Foydalanuvchi Yaratish</div>
+          
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+            <div class="card">
+            <div class="card-body">
+                <div class="p-4 border rounded">
+                    {% if code == "username" %}
+                    <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                        </div>
+                        <div class="ms-3">
+                          <div class="text-white">Bunaqa foydalanuvchi bazada bor !!!</div>
+                        </div>
+                      </div>
+                      <h3 class="alert_nums text-light align-self-center">7</h3>
+                    </div>
+                    {% elif code == "email" %}
+                    <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                        </div>
+                        <div class="ms-3">
+                          <div class="text-white">Bunaqa pochta bazada bor !!!</div>
+                        </div>
+                      </div>
+                      <h3 class="alert_nums text-light align-self-center">7</h3>
+                    </div>
+                    {% endif %}
+                    <form class="row g-3 needs-validation" action="{% url 'control_user_create' %}" method="POST" novalidate> 
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                          <label for="validationCustom01" class="form-label">Daraja</label>
+                          <select name="role" class="form-control" id="">
+                            {% for i in roles %}
+                            <option value="{{i.id}}">{{i.title}}</option>
+                            {% endfor %}
+                          </select>
+                          <div class="invalid-feedback">Iltimos tanlang kriting!</div>
+                        </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Foydalanuvchi nomi</label>
+                        <input type="text" name="username" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos foydalanuvchi nomini kriting!</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Parol</label>
+                        <input type="password" name="password" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos parol kriting!</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Foydalanuvchi Ismi</label>
+                        <input type="text" name="first_name" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos ism kriting!</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Familiya</label>
+                        <input type="text" name="last_name" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos familiya kriting!</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Pochta</label>
+                        <input type="email" name="email" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos pochta kriting!</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Telefo'n Raqam</label>
+                        <input type="number" name="phone" class="form-control" id="validationCustom01" required>
+                        <div class="invalid-feedback">Iltimos telefo'n raqam kriting!</div>
+                      </div>
+                      <div class="col-12">
+                        <button class="btn btn-primary" type="submit">Yaratish</button>
+                      </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+
+
+
+    </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+
+
+  {% endblock content %}

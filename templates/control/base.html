@@ -1,0 +1,363 @@
+{% load static %}
+
+
+<!doctype html>
+<html lang="en" class="light-theme">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- loader-->
+    <link href="{% static 'control/assets/css/pace.min.css' %}" rel="stylesheet" />
+    <script src="{% static 'control/assets/js/pace.min.js' %}"></script>
+
+  <!--plugins-->
+  <link href="{% static 'control/assets/plugins/simplebar/css/simplebar.css' %}" rel="stylesheet" />
+  <link href="{% static 'control/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css' %}" rel="stylesheet" />
+  <link href="{% static 'control/assets/plugins/metismenu/css/metisMenu.min.css' %}" rel="stylesheet" />
+
+  <!-- CSS Files -->
+  <link href="{% static 'control/assets/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'control/assets/css/bootstrap-extended.css' %}" rel="stylesheet">
+  <link href="{% static 'control/assets/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'control/assets/css/icons.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!--Theme Styles-->
+  <link href="{% static 'control/assets/css/dark-theme.css' %}" rel="stylesheet" />
+  <link href="{% static 'control/assets/css/semi-dark.css' %}" rel="stylesheet" />
+  <link href="{% static 'control/assets/css/header-colors.css' %}" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/31.1.0/ckeditor.min.js" 
+  integrity="sha512-A2+2JT5Hd8WgdCcY0kx5vxi+W6c+e3gv0M1rYpJ1uaYBofZ+izmDSEQLTRctRcRfxA+iGE+MhCjdFMFDYubFQw==" 
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <title>SYN-UI - Bootstrap Admin Template</title>
+  </head>
+
+  {% block style %}
+
+  {% endblock style %}
+  <body>
+    
+
+ <!--start wrapper-->
+    <div class="wrapper">
+       
+       <!--start sidebar -->
+       <aside class="sidebar-wrapper" data-simplebar="true">
+        <div class="sidebar-header">
+          <div>
+            <img src="{% static 'control/assets/images/logo.png' %}" class="logo-icon" alt="logo icon">
+          </div>
+          <div class="toggle-icon ms-auto"><ion-icon name="menu-sharp" role="img" class="md hydrated" aria-label="menu sharp"></ion-icon>
+          </div>
+        </div>
+        <!--navigation-->
+        <ul class="metismenu" id="menu">
+            <li>
+                <a href="{% url 'control_index' %}">
+                  <div class="parent-icon"><ion-icon name="home-sharp" aria-label="home sharp" role="img" class="md hydrated"></ion-icon>
+                  </div>
+                  <div class="menu-title">Главная</div>
+                </a>
+            </li>
+            <li>
+              <a href="{% url 'control_category_all' %}">
+                <div class="parent-icon"><ion-icon name="apps-sharp" aria-label="apps sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Категории</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'control_course_all' %}">
+                <div class="parent-icon"><ion-icon name="school-outline" aria-label="apps sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Курсы</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'control_slider_all' %}">
+                <div class="parent-icon"><ion-icon name="copy-sharp" aria-label="copy sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Слайдеры</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'control_teacher_all' %}">
+                <div class="parent-icon"><ion-icon name="people-circle-outline" aria-label="copy sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Ustozlar</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'control_news_all' %}">
+                <div class="parent-icon"><ion-icon name="newspaper-outline" aria-label="copy sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Yangiliklar</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'crm_index' %}">
+                <div class="parent-icon"><ion-icon name="reorder-four-outline" aria-label="copy sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Zakazlar</div>
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'control_user_all' %}">
+                <div class="parent-icon"><ion-icon name="person-circle-outline" aria-label="copy sharp" role="img" class="md hydrated"></ion-icon>
+                </div>
+                <div class="menu-title">Ishchilar</div>
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;" class="has-arrow" aria-expanded="false">
+                <div class="parent-icon"><ion-icon name="business-outline" role="img" class="md hydrated" aria-label="briefcase sharp"></ion-icon>
+                </div>
+                <div class="menu-title">Akademiya</div>
+              </a>
+              <ul class="mm-collapse">
+                <li> <a href="{% url 'control_academy' %}"><ion-icon name="ellipse-outline" role="img" class="md hydrated" aria-label="ellipse outline"></ion-icon>AboutUs</a>
+                </li>
+                <li> <a href="{% url 'control_gallery' %}"><ion-icon name="ellipse-outline" role="img" class="md hydrated" aria-label="ellipse outline"></ion-icon>Gallery</a>
+                </li>
+                <li> <a href="{% url 'control_discount' %}"><ion-icon name="ellipse-outline" role="img" class="md hydrated" aria-label="ellipse outline"></ion-icon>Discount</a>
+                </li>
+              </ul>
+            </li>
+        </ul>
+        <!--end navigation-->
+     </aside>
+     <!--end sidebar -->
+
+        <!--start top header-->
+          <header class="top-header">
+            <nav class="navbar navbar-expand gap-3">
+              <div class="mobile-menu-button"><ion-icon name="menu-sharp"></ion-icon></div>
+              <form class="searchbar">
+                <div class="position-absolute top-50 translate-middle-y search-icon ms-3"><ion-icon name="search-sharp"></ion-icon></div>
+                <input class="form-control" type="text" placeholder="Search for anything">
+                <div class="position-absolute top-50 translate-middle-y search-close-icon"><ion-icon name="close-sharp"></ion-icon></div>
+             </form>
+             <div class="top-navbar-right ms-auto">
+
+              <ul class="navbar-nav align-items-center">
+                <li class="nav-item mobile-search-button">
+                  <a class="nav-link" href="javascript:;">
+                    <div class="">
+                      <ion-icon name="search-sharp"></ion-icon>
+                    </div>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link dark-mode-icon" href="javascript:;">
+                    <div class="mode-icon">
+                      <ion-icon name="moon-sharp"></ion-icon> 
+                    </div>
+                  </a>
+                </li>
+                <li class="nav-item dropdown dropdown-large dropdown-apps">
+                  <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-bs-toggle="dropdown">
+                    <div class="">
+                      <ion-icon name="apps-sharp"></ion-icon>
+                    </div>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                    <div class="row row-cols-3 g-3 p-3">
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-purple text-white"><ion-icon name="cart-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Orders</div>
+                      </div>
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-info text-white"><ion-icon name="people-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Teams</div>
+                      </div>
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-success text-white"><ion-icon name="shield-checkmark-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Tasks</div>
+                      </div>
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-danger text-white"><ion-icon name="videocam-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Media</div>  
+                      </div>
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-warning text-white"><ion-icon name="file-tray-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Files</div>
+                      </div>
+                      <div class="col text-center">
+                        <div class="app-box mx-auto bg-gradient-branding text-white"><ion-icon name="notifications-sharp"></ion-icon>
+                        </div>
+                        <div class="app-title">Alerts</div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+               </ul>
+
+              </div>
+            </nav>
+          </header>
+        <!--end top header-->
+
+          
+        {% block content %}
+
+        {% endblock content %}
+
+
+        <!--start footer-->
+           <footer class="footer">
+            <div class="footer-text">
+               Copyright © 2021. All right reserved.
+            </div>
+            </footer>
+          <!--end footer-->
+
+        <!--Start Back To Top Button-->
+		     <a href="javaScript:;" class="back-to-top"><ion-icon name="arrow-up-outline"></ion-icon></a>
+         <!--End Back To Top Button-->
+  
+         <!--start switcher-->
+         <div class="switcher-body">
+          <button class="btn btn-primary btn-switcher shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><ion-icon name="color-palette-sharp" class="me-0"></ion-icon></button>
+          <div class="offcanvas offcanvas-end shadow border-start-0 p-2" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling">
+            <div class="offcanvas-header border-bottom">
+              <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Theme Customizer</h5>
+              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+              <h6 class="mb-0">Theme Variation</h6>
+              <hr>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="LightTheme" value="option1" checked>
+                <label class="form-check-label" for="LightTheme">Light</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="DarkTheme" value="option2">
+                <label class="form-check-label" for="DarkTheme">Dark</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="SemiDark" value="option3">
+                <label class="form-check-label" for="SemiDark">Semi Dark</label>
+              </div>
+              <hr/>
+              <h6 class="mb-0">Header Colors</h6>
+              <hr/>
+              <div class="header-colors-indigators">
+                <div class="row row-cols-auto g-3">
+                  <div class="col">
+                    <div class="indigator headercolor1" id="headercolor1"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor2" id="headercolor2"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor3" id="headercolor3"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor4" id="headercolor4"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor5" id="headercolor5"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor6" id="headercolor6"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor7" id="headercolor7"></div>
+                  </div>
+                  <div class="col">
+                    <div class="indigator headercolor8" id="headercolor8"></div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+         </div>
+         <!--end switcher-->
+
+
+          <!--start overlay-->
+           <div class="overlay nav-toggle-icon"></div>
+          <!--end overlay-->
+
+     </div>
+  <!--end wrapper-->
+
+
+    <!-- JS Files-->
+    <script src="{% static 'control/assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'control/assets/plugins/simplebar/js/simplebar.min.js' %}"></script>
+    <script src="{% static 'control/assets/plugins/metismenu/js/metisMenu.min.js' %}"></script>
+    <script src="{% static 'control/assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <!--plugins-->
+    <script src="{% static 'control/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'control/assets/plugins/chartjs/chart.min.js' %}"></script>
+    <script src="{% static 'control/assets/js/index.js' %}"></script>
+    <script src="{% static 'control/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'control/assets/plugins/datatable/js/dataTables.bootstrap5.min.js' %}"></script>
+    <script src="{% static 'control/assets/js/table-datatable.js' %}"></script>
+    <script src="{% static 'control/assets/js/component-popovers-tooltips.js' %}"></script>
+    <!-- Main JS-->
+    <script src="{% static 'control/assets/js/main.js' %}"></script>
+
+    {% block js %}
+
+    {% endblock js %}
+    
+     <style>
+       #example_filter {
+         margin-bottom: 35px !important;
+       }
+       #example_info {
+         display: none;
+       }
+     </style>
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+          (function () {
+            'use strict'
+      
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+      
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+              }
+      
+              form.classList.add('was-validated')
+              }, false)
+            })
+          })()
+      </script>
+
+<script>
+    setInterval(myTimer, 1000);
+    function myTimer() {
+        const d = new Date();
+        let cc = document.querySelectorAll('.alert_nums');
+        cc.forEach(element => {
+            element.innerHTML -= 1
+        })
+    }
+    setInterval(()=> $(".alert").alert('close'), 6000)
+  </script>
+
+  {% block js_content %}
+  {% endblock js_content %}
+  </body>
+</html>

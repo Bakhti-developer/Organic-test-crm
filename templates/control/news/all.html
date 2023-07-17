@@ -1,0 +1,99 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+   <div class="page-content">
+
+    <!--start breadcrumb-->
+    <div class="page-breadcrumb d-flex align-items-center mb-3">
+      <div class="breadcrumb-title pe-3 d-none d-sm-block">Barcha Yangiliklar</div>
+      
+<div class="ms-auto d-block">
+<div class="btn-group">
+<a href="{% url 'control_news_add' %}" class="btn btn-outline-primary d-block">Qo'shish</a>
+</div>
+</div>
+
+    </div>
+    <!--end breadcrumb-->
+    <hr>
+
+    {% if code == 'create' %}
+    <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+            </div>
+            <div class="ms-3">
+            <div class="text-white">Yangilk Yaratildi.</div>
+            </div>
+        </div>
+        <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% elif code == "edit" %}
+    <div class="alert alert-dismissible fade show py-2 bg-warning d-flex justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+        </div>
+        <div class="ms-3">
+          <div class="text-white">Yangilik O'zgartitldi.</div>
+        </div>
+      </div>
+      <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% elif code == "remove" %}
+    <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+        </div>
+        <div class="ms-3">
+          <div class="text-white">Yangilik O'chrirldi.</div>
+        </div>
+      </div>
+      <h3 class="alert_nums text-light align-self-center">7</h3>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="example" class="table table-striped table-bordered dataTable no-footer" style="width:100%" role="grid" aria-describedby="example_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Фото: activate to sort column descending" style="width: 49px;">Rasmi</th>
+                                        <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Название: activate to sort column ascending" style="width: 469.688px;">Sarlavha</th>
+                                        <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-label="Детали: activate to sort column ascending" style="width: 86.375px;">Batafsil</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for new in news %}
+                                    <tr style="vertical-align: middle;" class="table60 odd" role="row">
+                                        <td class="sorting_1"><img height="50" width="50" class="rounded" src="{{ new.img_min.url }}" alt="" style="object-fit: cover;"></td>
+                                        <td>{{ new.title_uz | safe | truncatechars:70 }}</td>
+                                        <td><a href="{% url 'control_news_detail' new.slug %}" class="btn btn-success btn-sm">Batafsil</a> 
+                                                                    
+                                        <a class="btn btn-danger btn-sm d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Товар не видно." aria-label="Товар не видно."><ion-icon name="warning-sharp" class="m-0 md hydrated" aria-label="warning sharp" role="img"></ion-icon></a>
+                                        
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+  {% endblock content %}

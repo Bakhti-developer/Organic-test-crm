@@ -1,0 +1,496 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Kurs Malumotlarini O'zgartirish</div>
+          
+        <div class="ms-auto d-block">
+        <div class="btn-group">
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleDangerModal">O'chirish</button>
+        </div>
+        </div>
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+        <div class="card">
+            <div class="card-body">
+              <div class="p-4 border rounded">
+                {% if code == "title" %}
+                <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                    </div>
+                    <div class="ms-3">
+                      <div class="text-white">Bunday sarlavhada kurs mavjud !</div>
+                    </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+                </div>
+                {% endif %}
+                <form class="row g-3 needs-validation" action="{% url 'control_course_edit' %}" method="POST" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="course_slug" value="{{ course.slug }}">
+                    <div class="col-md-12">
+                        <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                          <div class=" shadow text-center">
+                            <img src="{{ course.img.url }}" style="object-fit: cover;" class="rounded" width="300" height="300px">
+                          </div>
+                          </div>
+                                
+                          <label for="validationCustom01" class="form-label">Rasm</label>
+                          <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" class="form-control has-validation" accept="image/png, image/jpeg" id="inputGroupFile02">
+                          </div>
+                      </div>
+                    <div class="col-sm-6 col-12">
+                      <label for="validationCustom00" class="form-label">Toifa</label>
+                      <select class="form-select mb-3" name="category_id" aria-label="Default select example" id="validationCustom00">
+                        {% for category in categories %}
+                          <option {% if category.id == course.category.id %} selected {% endif %} value="{{category.id}}">{{ category.title_ru }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustom01" class="form-label">Sarlavha</label>
+                    <input type="text" name="title_uz" class="form-control" value="{{ course.title_uz }}" id="validationCustom01" required>
+                    <div class="invalid-feedback">Iltimos sarlavhani kiriting</div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustomUsername" class="form-label">Priyoritet</label>
+                    <div class="input-group has-validation"> <span class="input-group-text" id="inputGroupPrepend">№</span>
+                      <input type="number" name="priority" value="{{ course.priority }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
+                      <div class="invalid-feedback">Iltimos priyoritetni kiriting</div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustomUsername" class="form-label">Narxi</label>
+                    <div class="input-group has-validation"> 
+                      <input type="number" name="price" value="{{ course.price }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
+                      <span class="input-group-text" id="inputGroupPrepend">UZS</span>
+                      <div class="invalid-feedback">Iltimos narxini kiriting</div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="validationCustomUsername" class="form-label">Tavsif</label>
+                      <textarea id="editor" class="form-control" name="description_uz">{{ course.description_uz }}</textarea>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Изменить</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="row py-4 px-5 text-center">
+            <div class="col-sm-6 col-12 p-3 border opacity08" id="click_course_lesson" style="background-color: #7ad800; color: #fff;">
+              <h3 style="cursor: pointer;">Kurs Darsliklari</h3>
+            </div>
+            <div id="click_course_guest" class="col-sm-6 col-12 p-3 border opacity08" style="background-color: #7ad800; color: #fff;">
+              <h3 style="cursor: pointer;">Kurs Mehmonlari</h3>
+            </div>
+            <style>
+              .opacity08 {
+                opacity: 0.8;
+              }
+            </style>
+          </div>
+
+          <!-- Course Lasson  -->
+          <div>
+            <div id="course_lesson" class="card d-none">
+              <div class="card-body">
+                {% if code == "edit_type" %}
+                <div id="alert" class="alert alert-dismissible fade show py-2 bg-warning d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                    </div>
+                    <div class="ms-3">
+                      <div class="text-white">Darslik oz'gartirildi</div>
+                    </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+                </div>
+                {% elif code == "add_type" %}
+                <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                      <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                      </div>
+                      <div class="ms-3">
+                      <div class="text-white">Darslik yaratildi.</div>
+                      </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+              </div>
+                {% elif code == "title" %}
+                <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                    </div>
+                    <div class="ms-3">
+                      <div class="text-white">Bunday sarlavhada darslik mavjud!</div>
+                    </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+                </div>
+                {% elif code == "delete" %}
+                <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+                    </div>
+                    <div class="ms-3">
+                      <div class="text-white">Darslik o'chirildi.</div>
+                    </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-between">
+                  <h4>Darsliklar</h4>
+                  <div class="ms-auto d-block">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductType">Qo'shish</button>
+                    </div>
+                  </div>
+                </div>
+            
+                <br>
+                <div class="table-responsive">
+                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Sarlavha</th>
+                                <th>Daqiqa</th>
+                                <th>Batafsil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for course_lesson in course.courselesson_set.all %}
+                          <tr style="vertical-align: middle;" class="table60 odd" role="row">
+                            <td>{{ course_lesson.title_uz }}</td>
+                            <td>{{ course_lesson.minute }}</td>
+                            <td><button type="button" data-bs-toggle="modal" data-bs-target="#course_lesson_{{course_lesson.id}}" class="btn btn-success btn-sm"> Batafsil </button> </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+  
+             <form action="{% url 'control_course_lesson_create' %}" method="POST">
+              {% csrf_token %}
+              <div class="modal fade" id="addProductType" tabindex="-1" style="display: none;" aria-hidden="true">
+              
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title"><b>Kurs darsliklari qo'shish</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="col-md-12">
+                      <label for="validationCustom01" class="form-label">Sarlavha</label>
+                      <input type="text" name="title_uz" class="form-control" id="validationCustom01" required="">
+                      <div class="invalid-feedback">Iltimos sarlavhani kiriting</div>
+                    </div>
+                    <div class="col-md-12">
+                      <label for="validationCustom01" class="form-label">Daqiqa</label>
+                    <input type="number" name="minute" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+
+                      <div class="invalid-feedback">Iltimos daqiqani kiriting</div>
+                    </div>
+                    <div class="col-md-12">
+                      <label for="validationCustomUsername" class="form-label">Tavsif</label>
+                        <textarea id="editor" class="form-control" name="content_uz"></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                        <input type="hidden" name="course_slug" value="{{ course.slug }}">
+                        <button type="submit" class="btn btn-primary btn-sm delete">Qo'shish</button>
+                  </div>
+                </div>
+              </div>
+            </div>  
+            </form>
+            {% for course_lesson in  course.courselesson_set.all %}
+            <div class="col">
+              <form action="{% url 'control_course_lesson_edit' %}" method="POST">
+                {% csrf_token %}
+              <div class="modal fade" id="course_lesson_{{course_lesson.id}}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title"><b>Kurs darsliklarini o'zgartirish</b></h5>
+                      <a href="{% url 'control_course_lesson_remove' course.slug course_lesson.id %}"><ion-icon name="trash-sharp" class="display-6"></ion-icon> </a>
+                    </div>
+                    <div class="modal-body">
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Sarlavha</label>
+                        <input type="text" name="title_uz" value="{{ course_lesson.title_uz }}" class="form-control" id="validationCustom01" required="">
+                        <div class="invalid-feedback">Iltimos sarlavhani kiriting</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustom01" class="form-label">Daqiqa</label>
+                        <input type="number" name="minute" value="{{ course_lesson.minute }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+                        <div class="invalid-feedback">Iltimos daqiqa kiriting</div>
+                      </div>
+                      <div class="col-md-12">
+                        <label for="validationCustomUsername" class="form-label">Tavsifi</label>
+                          <textarea id="editor" class="form-control" name="content_uz">{{ course_lesson.content_uz }}</textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                          <input type="hidden" name="course_lesson_id" value="{{course_lesson.id}}">
+                          <input type="hidden" name="course_slug" value="{{course.slug}}">
+                          <button type="submit" class="btn btn-outline-primary btn-sm delete">O'zgartirish</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Course Guest -->
+          <div>
+            <div id="course_guest" class="card d-none">
+              <div class="card-body">
+                {% if code == "edit_guest" %}
+                <div class="alert alert-dismissible fade show py-2 bg-warning d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                    </div>
+                    <div class="ms-3">
+                      <div class="text-white">Kurs mehmoni o'zgartirildi.</div>
+                    </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+                </div>
+                {% elif code == "add_guest" %}
+                <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+                  <div class="d-flex align-items-center">
+                      <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                      </div>
+                      <div class="ms-3">
+                      <div class="text-white">Kurs mehmoni qo'shildi</div>
+                      </div>
+                  </div>
+                  <h3 class="alert_nums text-light align-self-center">7</h3>
+              </div>
+              {% elif code == "delete_guest" %}
+              <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                  <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+                  </div>
+                  <div class="ms-3">
+                    <div class="text-white">Darslik o'chirildi.</div>
+                  </div>
+                </div>
+                <h3 class="alert_nums text-light align-self-center">7</h3>
+              </div>
+              {% endif %}
+                <div class="d-flex justify-content-between">
+                  <h4>Kurs Mehmoni</h4>
+                  <div class="ms-auto d-block">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCourseGuest">Qo'shish</button>
+                    </div>
+                  </div>
+                </div>
+            
+                <br>
+                <div class="table-responsive">
+                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Rasm</th>
+                                <th>Ism / Familya</th>
+                                <th>Batafsil</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for course_guest in  course.courseguest_set.all %}
+                          <tr style="vertical-align: middle;" class="table60 odd" role="row">
+                            <td class="sorting_1"><img height="50" width="50" class="rounded" src="{{ course_guest.img.url }}" alt="" style="object-fit: cover;"></td>
+                            <td>{{ course_guest.fio }}</td>
+                            <td><button type="button" data-bs-toggle="modal" data-bs-target="#course_guest_{{course_guest.id}}" class="btn btn-success btn-sm"> Batafsil </button> </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+
+            <form action="{% url 'control_course_guest_create' %}" method="POST" enctype="multipart/form-data" novalidate="">
+              {% csrf_token %}
+              <div class="modal fade" id="addCourseGuest" tabindex="-1" style="display: none;" aria-hidden="true">
+              
+              <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title"><b>Kurs Mehmonlari</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="col-12">
+                      <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                        <div class=" shadow text-center">
+                          <img src="https://dunyo.yola.menu/static/control/assets/images/404-error.png" alt="..." class="rounded-circle" width="200">
+                        </div>
+                        </div>
+                              
+                        <label for="validationCustom01" class="form-label">Rasm </label>
+                        <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" required class="form-control has-validation" accept="image/png, image/jpeg" required id="inputGroupFile02">
+                          </div>
+                    </div>
+                    <div class="col-md-12 pt-2">
+                      <label for="validationCustom01" class="form-label">Ism / Familya</label>
+                      <input type="text" name="fio" class="form-control" id="validationCustom01" required="">
+                      <div class="invalid-feedback">Iltimos ism / familya kiriting.</div>
+                    </div>
+                    <div class="col-md-12 pt-3">
+                      <label for="validationCustomUsername" class="form-label">Tavsif</label>
+                        <textarea id="editor" class="form-control" name="content"></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                        <input type="hidden" name="course_slug" value="{{ course.slug }}">
+                        <button type="submit" class="btn btn-primary btn-sm delete">Yaratish</button>
+                  </div>
+                </div>
+              </div>
+            </div>  
+            </form>
+
+
+            {% for course_guest in  course.courseguest_set.all %}
+            <div class="col">
+              <form action="{% url 'control_course_guest_edit' %}" enctype="multipart/form-data" method="POST" novalidate="">
+                {% csrf_token %}
+              <div class="modal fade" id="course_guest_{{course_guest.id}}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title"><b>Kurs Mehmoni O'zgartirish</b></h5>
+                      <a href="{% url 'control_course_guest_remove' course.slug course_guest.id %}"><ion-icon name="trash-sharp" class="display-6"></ion-icon> </a>
+                    </div>
+                    <div class="modal-body">
+                      <div class="col-12">
+                        <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                          <div class=" shadow text-center">
+                            <img src="{{ course_guest.img.url }}" alt="..."  width="200">
+                          </div>
+                          </div>
+                                
+                          <label for="validationCustom01" class="form-label">Rasm </label>
+                          <div class="input-group has-validation mb-3">
+                              <input type="file" name="file" required class="form-control has-validation" accept="image/png, image/jpeg" required id="inputGroupFile02">
+                            </div>
+                      </div>
+                      <div class="col-md-12 pt-2">
+                        <label for="validationCustom01" class="form-label">Ism / Familya</label>
+                        <input type="text" name="fio" value="{{ course_guest.fio }}" class="form-control" id="validationCustom01" required="">
+                        <div class="invalid-feedback">Пожалуйста, введите название.</div>
+                      </div>
+                      <div class="col-md-12 pt-3">
+                        <label for="validationCustomUsername" class="form-label">Tavsif</label>
+                          <textarea id="editor" class="form-control" name="content">{{ course_guest.content }}</textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                          <input type="hidden" name="course_guest_id" value="{{course_guest.id}}">
+                          <input type="hidden" name="course_slug" value="{{course.slug}}">
+                          <button type="submit" class="btn btn-outline-primary btn-sm delete">O'zgartirish</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </div>
+            {% endfor %}
+          </div>
+
+
+          <div class="col">
+            <!-- Modal -->
+            <div class="modal fade" id="exampleDangerModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger"><b>Diqqat !</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-danger">
+                    <p>O'chirganingizdan so'ng qayta tiklab bolmaydi</p>
+                    <input type="checkbox" id="checker1"> <label for="checker1">OK</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Yopish</button>
+                    <form action="{% url 'control_course_remove' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="course_slug" value="{{course.slug}}">
+                        <button type="submit" class="btn btn-outline-danger deleted" disabled>O'chirish</button>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+          </div>
+
+        </div>
+
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+  <script>
+    let check = document.querySelector('#checker1')
+    check.addEventListener('change' ,  ()=> {
+    let remove = document.querySelector('.modal-footer .deleted')
+    
+    if (check.checked) {
+    remove.removeAttribute('disabled')
+    } else {
+    remove.setAttribute('disabled', 'true')
+    }
+    })
+  </script>  
+
+  <script>
+    let course_guest = document.querySelector('#course_guest')
+    let course_lesson = document.querySelector('#course_lesson')
+    let click_course_lesson = document.querySelector('#click_course_lesson')
+    let click_course_guest = document.querySelector('#click_course_guest')
+    click_course_lesson.addEventListener('click', () => {
+      course_lesson.classList.toggle('d-none')
+      click_course_lesson.classList.toggle('opacity08')
+      course_guest.classList.add('d-none')
+      click_course_guest.classList.add('opacity08')
+    })
+    click_course_guest.addEventListener('click', () => {
+      course_guest.classList.toggle('d-none')
+      click_course_guest.classList.toggle('opacity08')
+      course_lesson.classList.add('d-none')
+      click_course_lesson.classList.add('opacity08')
+    })
+  </script>
+
+
+  {% endblock content %}

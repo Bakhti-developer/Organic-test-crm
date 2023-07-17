@@ -1,0 +1,193 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <div class="row">
+
+             <div class="col-12">
+                <div>
+                    <div id="course_lesson" class="card">
+                      <div class="card-body">
+                        {% if code == "added_discount" %}
+                        <div class="alert alert-dismissible fade show py-2 bg-success d-flex justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                            </div>
+                            <div class="ms-3">
+                              <div class="text-white">Chegirma qo'shildi</div>
+                            </div>
+                          </div>
+                          <h3 class="alert_nums text-light align-self-center">7</h3>
+                        </div>
+                        {% elif code == "removed_discount" %}
+                        <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="fs-3 text-white"><ion-icon name="trash-sharp"></ion-icon>
+                            </div>
+                            <div class="ms-3">
+                              <div class="text-white">Discount o'chirildi</div>
+                            </div>
+                          </div>
+                          <h3 class="alert_nums text-light align-self-center">7</h3>
+                        </div>
+                        {% elif code == "edited_type" %}
+                        <div id="alert" class="alert alert-dismissible fade show py-2 bg-warning d-flex justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="fs-3 text-white"><ion-icon name="checkmark-circle-sharp"></ion-icon>
+                            </div>
+                            <div class="ms-3">
+                              <div class="text-white">Chegirma oz'gartirildi</div>
+                            </div>
+                          </div>
+                          <h3 class="alert_nums text-light align-self-center">7</h3>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between">
+                          <h4>Chegirma</h4>
+                          <div class="ms-auto d-block">
+                            <div class="btn-group">
+                              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDiscount">Qo'shish</button>
+                            </div>
+                          </div>
+                        </div>
+                    
+                        <br>
+                        <div class="">
+                            <table id="example" class="table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80%;">Sarlavha</th>
+                                        <th>Chegirma</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  {% for i in discount %}
+                                    <tr>
+                                        <td>{{ i.title }}</td>
+                                        <td>{{ i.unit }}%</td>
+                                        <td>
+                                          <button type="button" data-bs-toggle="modal" data-bs-target="#course_discount_{{i.id}}" class="btn btn-success btn-sm"> Batafsil </button>
+                                        </td>
+                                        
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <form action="{% url 'control_discount_add' %}" method="POST" enctype="multipart/form-data" novalidate="">
+                        {% csrf_token %}
+                        <div class="modal fade" id="addDiscount" tabindex="-1" style="display: none;" aria-hidden="true">
+                        
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title"><b>Discount</b></h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="col-md-12 pt-4">
+                                <label for="validationCustom01" class="form-label">Sarlavha</label>
+                                <input type="text" name="title" class="form-control" id="validationCustom01" required="">
+                                <div class="invalid-feedback">Iltimos sarlavhani kiriting.</div>
+                              </div>
+                              <div class="col-md-12 pt-4">
+                                <label for="validationCustom01" class="form-label">Daqiqa</label>
+                                <input type="number" min="1" max="100" name="unit" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+                                <div class="invalid-feedback">Iltimos daqiqa kiriting</div>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                                <button type="submit" class="btn btn-primary btn-sm delete">Yaratish</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>  
+                      </form> 
+
+                      {% for i in  discount %}
+                      <div class="col">
+                        <form action="{% url 'control_discount_edit' %}" method="POST">
+                          {% csrf_token %}
+                        <div class="modal fade" id="course_discount_{{i.id}}" tabindex="-1" aria-hidden="true">
+                          <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title"><b>Kurs darsliklarini o'zgartirish</b></h5>
+                                <a href="{% url 'control_discount_remove' i.id %}"><ion-icon name="trash-sharp" class="display-6"></ion-icon> </a>
+                              </div>
+                              <div class="modal-body">
+                                <div class="col-md-12 pt-4">
+                                  <label for="validationCustom01" class="form-label">Sarlavha</label>
+                                  <input type="text" name="title" value="{{ i.title }}" class="form-control" id="validationCustom01" required="">
+                                  <div class="invalid-feedback">Iltimos sarlavhani kiriting.</div>
+                                </div>
+                                <div class="col-md-12 pt-4">
+                                  <label for="validationCustom01" class="form-label">Daqiqa</label>
+                                  <input type="number" min="1" max="100"  value="{{ i.unit }}" name="unit" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+                                  <div class="invalid-feedback">Iltimos daqiqa kiriting</div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Bekor qilish</button>
+                                    <input type="hidden" name="id" value="{{i.id}}">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm delete">O'zgartirish</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      </div>
+                      {% endfor %}
+                    
+                  </div>
+             </div>
+             
+          </div>
+
+
+
+
+    </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+
+
+
+  <div class="col">
+    <!-- Modal -->
+    <div class="modal fade" id="photo_upload" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><b>Выберите изображение</b></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'control_gallery_add' %}" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="input-group has-validation mb-3">
+              <input type="file" name="file" class="form-control has-validation" accept="image/png, image/jpeg"required id="inputGroupFile02">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary">Добавить</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock content %}

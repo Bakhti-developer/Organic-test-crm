@@ -1,0 +1,107 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Toifa O'zgartirish</div>
+          
+<div class="ms-auto d-block">
+<div class="btn-group">
+  <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleDangerModal">O'chirish</button>
+</div>
+</div>
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+<div class="card">
+  <div class="card-body">
+    <div class="p-4 border rounded">
+        {% if code == "title" %}
+        <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+          <div class="d-flex align-items-center">
+            <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+            </div>
+            <div class="ms-3">
+              <div class="text-white">Bunday sarlavhada toifa mavjud !</div>
+            </div>
+          </div>
+          <h3 class="alert_nums text-light align-self-center">7</h3>
+        </div>
+        {% endif %}
+      <form class="row g-3 needs-validation" action="{% url 'control_category_edit' %}" method="POST" novalidate="">
+        {% csrf_token %}
+          <input type="hidden" name="category_slug" value="{{ category.slug }}">
+        <div class="col-md-12">
+          <label for="validationCustom01" class="form-label">Toifa</label>
+          <input type="text" name="title_uz" class="form-control" id="validationCustom01" value="{{ category.title_uz }}" required="">
+          <div class="invalid-feedback">Iltimos toifa sarlavhasini kiriting</div>
+        </div>
+        <div class="col-md-12">
+          <label for="validationCustomUsername" class="form-label">Priyoritet</label>
+          <div class="input-group has-validation"> <span class="input-group-text" id="inputGroupPrepend">№</span>
+            <input type="number" name="priority" value="{{ category.priority }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); if (this.value.length > 12) {this.value = 0}" class="form-control priority" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required="">
+            <div class="invalid-feedback">Iltimos priyoritet kirting</div>
+          </div>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">O'zgartirish</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+    <div class="col">
+        <!-- Modal -->
+        <div class="modal fade" id="exampleDangerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><b>Diqqat !</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-danger">
+                <p>O'chirganingizdan so'ng qayta tiklab bolmaydi.</p>
+                <input type="checkbox" id="checker1"> <label for="checker1">Roziman</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Yopish</button>
+                <form action="{% url 'control_category_remove' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="category_slug" value="{{category.slug}}">
+                    <button type="submit" class="btn btn-outline-danger delete" disabled>O'chirish</button>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+        </div>
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+  <script>
+    let check = document.querySelector('#checker1')
+    check.addEventListener('change' ,  ()=> {
+    let remove = document.querySelector('.modal-footer .delete')
+    
+    if (check.checked) {
+    remove.removeAttribute('disabled')
+    } else {
+    remove.setAttribute('disabled', 'true')
+    }
+    })
+</script>
+
+  {% endblock content %}

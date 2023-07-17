@@ -1,0 +1,73 @@
+{% extends 'control/base.html' %}
+
+{% block content %}
+
+  <!-- start page content wrapper-->
+  <div class="page-content-wrapper">
+    <!-- start page content-->
+
+    <div class="page-content">
+
+        <!--start breadcrumb-->
+        <div class="page-breadcrumb d-flex align-items-center mb-3">
+          <div class="breadcrumb-title pe-3 d-none d-sm-block">Yangilik yaratish</div>
+          
+
+        </div>
+        <!--end breadcrumb-->
+        <hr>
+        
+            <div class="card">
+            <div class="card-body">
+                <div class="p-4 border rounded">
+                    {% if code == "title" %}
+                    <div class="alert alert-dismissible fade show py-2 bg-danger d-flex justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <div class="fs-3 text-white"><ion-icon name="close-circle-sharp"></ion-icon>
+                        </div>
+                        <div class="ms-3">
+                          <div class="text-white">Bunday sarlavha  mavjud !</div>
+                        </div>
+                      </div>
+                      <h3 class="alert_nums text-light align-self-center">7</h3>
+                    </div>
+                    {% endif %}
+                <form class="row g-3 needs-validation" action="{% url 'control_news_create' %}" method="POST" enctype="multipart/form-data" novalidate="">
+                    {% csrf_token %}
+                    <div class="col-md-12">
+                        <div class="mb-4 d-flex flex-column gap-3 align-items-center justify-content-between">
+                            <div class=" shadow text-center">
+                            <img src="https://dunyo.yola.menu/static/control/assets/images/404-error.png" alt="..." class="rounded-circle" width="800" height="350px">
+                            </div>
+                            </div>
+                                
+                            <label for="validationCustom01" class="form-label">Rasmi </label>
+                            <div class="input-group has-validation mb-3">
+                            <input type="file" name="file" class="form-control has-validation" accept="image/png, image/jpeg" required="" id="inputGroupFile02">
+                            </div>
+                    </div>
+                        <div class="col-12">
+                            <label for="validationCustom01" class="form-label">News sarlavha</label>
+                            <input type="text" name="title_uz" class="form-control" id="validationCustom01" required>
+                            <div class="invalid-feedback">Iltimos sarlavhani kiriting</div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="validationCustomUsername" class="form-label">Yangilik tvsif</label>
+                              <textarea id="editor" class="form-control" name="description_uz"></textarea>
+                          </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" type="submit">Yaratish</button>
+                        </div>
+                </form>
+                </div>
+            </div>
+            </div>
+
+
+        </div>
+
+    <!-- end page content-->
+   </div>
+  <!--end page content wrapper-->
+
+  {% endblock content %}
