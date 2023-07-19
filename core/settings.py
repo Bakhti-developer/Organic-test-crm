@@ -77,8 +77,15 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
+CORS_ALLOWED_ORIGINS = [
+    "https://crm.up.railway.app",
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://crm.up.railway.app",
+]
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
