@@ -29,7 +29,7 @@ let app = new Vue({
                         this.completedLeads = this.completedLeads.filter(item => item.operator_id == +this.accountId)} 
                     else if (+this.accountRole > 3){document.querySelector("body").remove()} 
                     else{/*pass*/}
-                } else{this.roleUndefined = true; let audio = new Audio(`/static/crm/audio/${this.errorAudio}`); audio.play()}
+                } else{this.loader = false; this.roleUndefined = true; let audio = new Audio(`/static/crm/audio/${this.errorAudio}`); audio.play()}
     
                 this.loader = false;
     
@@ -151,7 +151,7 @@ let app = new Vue({
                         lead = event.target.parentElement.insertBefore(item, event.target.nextSibling);
                     } else if (event.target.classList.contains("rounded")){
                         lead = event.target.parentElement.parentElement.insertBefore(item, event.target.parentElement.nextSibling);
-                    } else if (event.target.classList.contains("single-item")){
+                    } else if (event.target.classList.contains("single-item")){    
                         lead = event.target.parentElement.parentElement.parentElement.insertBefore(item, event.target.parentElement.parentElement.nextSibling);
                     } else if (event.target.classList.contains( "date")){
                         lead = event.target.parentElement.parentElement.parentElement.parentElement.insertBefore(
