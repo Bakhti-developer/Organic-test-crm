@@ -416,7 +416,7 @@
         <div v-show="loader == false" class="d-flex" style="overflow-x: scroll; height: 90vh;">
 
             <!-- new leads start -->
-            <div class="mx-1">
+            <div class="mx-1" v-show="loader == false">
                 <div class="card card-body order-table border border-info">
                     <div class="d-flex align-items-center justify-content-between bg-info text-light p-2 rounded">
                         <h5 class="mb-0"><b>Yangi leadlar</b></h5>
@@ -485,7 +485,7 @@
             </div><!-- table leads end -->
 
             <!-- completed leads start -->
-            <div class="mx-1">
+            <div class="mx-1" v-show="loader == false">
                 <div class="card card-body order-table border border-success">
                     <div class="d-flex align-items-center justify-content-between bg-success text-light p-2 rounded">
                         <h5 class="mb-0"><b>Bajarilib bo'lganlar</b></h5>
